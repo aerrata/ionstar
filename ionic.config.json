@@ -1,0 +1,7 @@
+{
+  "name": "ionstar",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}

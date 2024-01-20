@@ -5,6 +5,14 @@
 }
 
 .action-sheet-group.sc-ion-action-sheet-md {
-  border-top-right-radius: 20px;
-  border-top-left-radius: 20px;
+  --at-apply: rounded-t-2xl;
+}
+
+.input-fill-outline.sc-ion-input-md-h {
+  --border-radius: 1rem;
+  --at-apply: rounded-t-2xl min-h-[60px];
+}
+
+ion-button {
+  --at-apply: m-0;
 }

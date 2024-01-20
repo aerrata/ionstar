@@ -21,7 +21,6 @@
         <ion-card-header class="p-0">
           <ion-card-title>{{ user?.name }}</ion-card-title>
           <ion-card-subtitle>{{ user?.email }}</ion-card-subtitle>
-          <ion-card-subtitle>{{ user?.token }}</ion-card-subtitle>
         </ion-card-header>
       </ion-card>
 
@@ -40,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import axios from 'axios'
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonAvatar, actionSheetController, onIonViewWillEnter } from '@ionic/vue'
 import { cog, logOut } from 'ionicons/icons'
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Preferences } from '@capacitor/preferences'
 
@@ -54,9 +53,6 @@ const router = useRouter()
 const user = ref()
 
 onIonViewWillEnter(async () => {
-  console.log(await Preferences.get({ key: 'user' }))
-  console.log(await Preferences.keys())
-
   const { value } = await Preferences.get({ key: 'user' })
 
   user.value = JSON.parse(value)
@@ -83,16 +79,10 @@ const confirmLogOut = async () => {
       {
         text: 'Yes',
         role: 'destructive',
-        data: {
-          action: 'delete',
-        },
         handler: () => handleLogOut(),
       },
       {
         text: 'No',
-        data: {
-          action: 'share',
-        },
       },
     ],
   })

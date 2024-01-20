@@ -1,16 +1,11 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router'
 import { RouteRecordRaw } from 'vue-router'
-import TabsPage from '../views/TabsPage.vue'
+import { Preferences } from '@capacitor/preferences'
+import TabsPage from '@/views/TabsPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    redirect: '/tabs/home',
-  },
-  {
-    path: '/login',
-    component: () => import('@/views/Auth/Login.vue'),
-  },
+  { path: '/login', component: () => import('@/views/Auth/Login.vue'), meta: { requiresGuest: true } },
+  { path: '/', redirect: '/tabs/home' },
   {
     path: '/tabs/',
     component: TabsPage,
@@ -28,9 +23,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/Profile.vue'),
       },
     ],
-    meta: {
-      requiresAuth: true,
-    },
+    meta: { requiresAuth: true },
   },
 ]
 
@@ -39,10 +32,15 @@ const router = createRouter({
   routes,
 })
 
-router.beforeResolve(async (to) => {
-  if (to.meta.requiresAuth) {
-    try {
-    } catch (error) {}
+router.beforeEach(async (to, from, next) => {
+  const { value: isAuthenticated } = await Preferences.get({ key: 'user' })
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ path: '/login' })
+  } else if (to.meta.requiresGuest && isAuthenticated) {
+    next({ path: '/' })
+  } else {
+    next()
   }
 })
 

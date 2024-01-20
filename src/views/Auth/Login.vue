@@ -16,7 +16,10 @@
         <form class="p-10 space-y-6" @submit.prevent="handleLogin">
           <ion-input v-model="form.email" label="Email" label-placement="floating" fill="outline"></ion-input>
           <ion-input v-model="form.password" type="password" label="Password" label-placement="floating" fill="outline"></ion-input>
-          <ion-button type="submit" mode="ios" expand="block">Log In</ion-button>
+          <ion-button type="submit" mode="ios" expand="block">
+            <!-- <ion-spinner name="dots"></ion-spinner> -->
+            Log In
+          </ion-button>
         </form>
       </div>
     </ion-content>
@@ -26,7 +29,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { reactive } from 'vue'
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton } from '@ionic/vue'
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonSpinner } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import { Preferences } from '@capacitor/preferences'
 

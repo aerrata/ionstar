@@ -32,20 +32,24 @@ import { reactive } from 'vue'
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonSpinner } from '@ionic/vue'
 import { useRouter } from 'vue-router'
 import { Preferences } from '@capacitor/preferences'
+import { Device } from '@capacitor/device'
 
 axios.defaults.baseURL = 'http://api.foo.test/api'
 
 const router = useRouter()
 
 const form = reactive({
-  email: 'ali@domain.com',
-  password: 'password',
-  device_name: 'Android',
+  email: '',
+  password: '',
 })
 
 const handleLogin = async () => {
   try {
-    const response = await axios.post('/login', form)
+    const { model } = await Device.getInfo()
+
+    axios.defaults.baseURL = 'http://api.foo.test/api'
+
+    const response = await axios.post('/login', { ...form, device_name: model })
 
     const user = {
       name: response.data.user.name,

@@ -15,7 +15,7 @@
       <ion-card class="flex flex-col justify-center items-center text-center p-6 space-y-4 rounded-xl">
         <ion-card-content class="p-0">
           <ion-avatar>
-            <img alt="Avatar" src="https://source.boringavatars.com/beam/100/aliot" />
+            <img alt="Avatar" :src="`https://source.boringavatars.com/marble/100/${user?.name}`" />
           </ion-avatar>
         </ion-card-content>
         <ion-card-header class="p-0">
@@ -40,46 +40,28 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonAvatar, actionSheetController, onIonViewWillEnter } from '@ionic/vue'
 import { cog, logOut } from 'ionicons/icons'
-import { useRouter } from 'vue-router'
-import { Preferences } from '@capacitor/preferences'
+import { useAuthStore } from '@/stores/auth'
 
-axios.defaults.baseURL = 'http://api.foo.test/api'
-
-const router = useRouter()
+const auth = useAuthStore()
 
 const user = ref()
 
 onIonViewWillEnter(async () => {
-  const { value } = await Preferences.get({ key: 'user' })
-
-  user.value = JSON.parse(value)
+  auth.getUser().then((response) => {
+    user.value = response.data
+  })
 })
-
-async function handleLogOut() {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${user.value.token}`
-
-  try {
-    await axios.post('/logout')
-
-    await Preferences.remove({ key: 'user' })
-
-    router.push('/login')
-  } catch (error) {
-    console.error(error)
-  }
-}
 
 const confirmLogOut = async () => {
   const actionSheet = await actionSheetController.create({
-    header: 'Are you sure? 😥',
+    header: 'Are you sure?',
     buttons: [
       {
         text: 'Yes',
         role: 'destructive',
-        handler: () => handleLogOut(),
+        handler: () => auth.logout(),
       },
       {
         text: 'No',

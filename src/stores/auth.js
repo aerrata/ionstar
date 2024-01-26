@@ -3,18 +3,22 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import { Device } from '@capacitor/device'
-import { alertController } from '@ionic/vue'
+import { alertController, loadingController } from '@ionic/vue'
 import http from '@/helpers/http'
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
 
-  const token = localStorage.getItem('token') ? ref(localStorage.getItem('token')) : ref(null)
+  const token = localStorage.getItem('token') ? ref(localStorage.getItem('token')) : ref('')
 
   const isAuthenticated = computed(() => token.value !== '' && token.value !== null)
 
   const login = async (email, password) => {
+    const loading = await loadingController.create()
+
     try {
+      loading.present()
+
       const { model } = await Device.getInfo()
 
       const response = await axios.post('http://api.foo.test/api/login', {
@@ -24,6 +28,8 @@ export const useAuthStore = defineStore('auth', () => {
       })
 
       token.value = response.data
+
+      loading.dismiss()
 
       router.push('/')
     } catch (error) {
